@@ -4,6 +4,7 @@ use std::fmt;
 use std::error::Error;
 use std::fs::File;
 use std::io::Write;
+use itertools::Itertools;
 
 #[derive(Debug)]
 struct CmdParseError {
@@ -123,24 +124,24 @@ fn get_save() -> Vec<ListItem> {
             return vec![];
         },
         Ok(contents) => {
-            let mut lines = contents.lines();
+            let lines = contents.lines();
             let mut todos: Vec<ListItem> = vec![];
-            loop {
-                match lines.next() {
-                    None => return todos,
-                    Some(line) => {
-                        match lines.next() {
-                            None => return todos,
-                            Some(line2) => {
-                                todos.push(ListItem { description: line.to_string(), completed: if line2 == "true" { true } else { false }});
-                            }
-                        }
-                    }
+            let iter = lines.chunks(2);
+            for chunk in iter.into_iter() {
+                let chunk: Vec<&str> = chunk.collect();
+                if chunk.len() == 2 {
+                    let line = chunk[0];
+                    let line2 = chunk[1];
+                    todos.push(ListItem { description: line.to_string(), completed: if line2 == "true" { true } else { false }});
+                } else {
+                    return todos;
                 }
             }
+            todos
         },
     }
 }
+
 
 fn save_todo_list(todos: &Vec<ListItem>) {
     let mut file = File::create("todo.txt").expect("Failed to open file");
