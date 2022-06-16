@@ -28,7 +28,6 @@ impl Error for CmdParseError {
         &self.details
     }
 }
-  
 
 struct ListItem {
     description: String,
@@ -189,7 +188,7 @@ fn complete_todo(todos: &mut Vec<ListItem>) {
     match index_r {
         Err(err) => println!("Please enter a valid index: {}", err),
         Ok(index) => {
-            if index < todos.len() {
+            if index <= todos.len() {
                 todos[index-1].completed = true;
                 println!("'{}' marked as completed", todos[index-1].description);
             } else {
@@ -197,7 +196,6 @@ fn complete_todo(todos: &mut Vec<ListItem>) {
             }
         }
     }
-   
 }
 
 fn add_new_todo(todos: &mut Vec<ListItem>) {
@@ -217,7 +215,7 @@ fn remove_todo(todos: &mut Vec<ListItem>) {
     match index_r {
         Err(err) => println!("Please enter a valid index: {}", err),
         Ok(index) => {
-            if index < todos.len() {
+            if index <= todos.len() {
                 let removed = todos.remove(index-1);
                 println!("Removed item '{}'", removed.description);
             } else {
