@@ -55,35 +55,32 @@ impl FromStr for Command {
 
     fn from_str(s: &str) -> Result<Self, CmdParseError> {
         let mut iter = s.split_ascii_whitespace();
-        match iter.next() {
-            Some(cmd) => {
-                if cmd == "help" || cmd == "h" {
-                    return Ok(Command::Help);
-                } else if cmd == "quit" || cmd == "q" {
-                    return Ok(Command::Quit);
-                } else if cmd == "add" || cmd == "a" {
-                    return Ok(Command::Add);
-                } else if cmd == "delete" || cmd == "d" {
-                    return Ok(Command::Delete);
-                } else if cmd == "complete" || cmd == "x" {
-                    return Ok(Command::Complete);
-                } else if cmd == "list" || cmd == "l" {
-                    match iter.next() {
-                        None => return Ok(Command::List(ListType::All)),
-                        Some(t) => {
-                            if t == "all" || t == "a" {
-                                return Ok(Command::List(ListType::All));
-                            } else if t == "done" || t == "d" {
-                                return Ok(Command::List(ListType::Done));
-                            } else if t == "open" || t == "o" {
-                                return Ok(Command::List(ListType::Open));
-                            }
-                            return Err(CmdParseError::new(format!("unknown list argument: {}", t)));
-                        },
-                    }
+        if let Some(cmd) = iter.next() {
+            if cmd == "help" || cmd == "h" {
+                return Ok(Command::Help);
+            } else if cmd == "quit" || cmd == "q" {
+                return Ok(Command::Quit);
+            } else if cmd == "add" || cmd == "a" {
+                return Ok(Command::Add);
+            } else if cmd == "delete" || cmd == "d" {
+                return Ok(Command::Delete);
+            } else if cmd == "complete" || cmd == "x" {
+                return Ok(Command::Complete);
+            } else if cmd == "list" || cmd == "l" {
+                match iter.next() {
+                    None => return Ok(Command::List(ListType::All)),
+                    Some(t) => {
+                        if t == "all" || t == "a" {
+                            return Ok(Command::List(ListType::All));
+                        } else if t == "done" || t == "d" {
+                            return Ok(Command::List(ListType::Done));
+                        } else if t == "open" || t == "o" {
+                            return Ok(Command::List(ListType::Open));
+                        }
+                        return Err(CmdParseError::new(format!("unknown list argument: {}", t)));
+                    },
                 }
             }
-            None => (),
         }
         Err(CmdParseError::new(format!("unknown command: {}", s)))
     }
